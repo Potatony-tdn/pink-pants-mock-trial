@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pink Pants - Script Editor</title>
+    <link rel="stylesheet" href="main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Pink Pants</div>
+        <ul class="nav-links">
+            <li><a href="main.html">Home</a></li>
+            <li><a href="#handbook">Handbook</a></li>
+            <li><a href="#resources">Resources</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+    </nav>
+
+    <div class="editor-container">
+        <div class="editor-sidebar">
+            <h3>Script Settings</h3>
+            <button type="button" class="case-settings-btn">
+                <span class="material-icons">gavel</span>
+                Case Settings
+            </button>
+            <form id="scriptForm">
+                <div class="form-group">
+                    <label>Side:</label>
+                    <select id="side" required>
+                        <option value="prosecution">Prosecution / Plaintiff</option>
+                        <option value="defense">Defense</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Examination Type:</label>
+                    <select id="examinationType" required>
+                        <option value="direct examination">Direct Examination</option>
+                        <option value="cross examination">Cross Examination</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Witness Type:</label>
+                    <select id="witnessType" required>
+                        <option value="lay witness">Lay Witness</option>
+                        <option value="expert witness">Expert Witness</option>
+                    </select>
+                </div>
+
+                <div class="form-group expert-field-container">
+                    <label for="expertField">Expert's Field: <span class="required">*</span></label>
+                    <input 
+                        type="text" 
+                        id="expertField" 
+                        name="expertField" 
+                        class="form-control" 
+                        placeholder="e.g., Forensic Science, Chemistry, Psychology..."
+                    >
+                </div>
+                <div class="form-group">
+                    <label>Witness Name:</label>
+                    <input type="text" id="witnessName" required>
+                </div>
+
+                <div class="form-group">
+                    <div class="file-input-container">
+                        <label class="file-input-label" for="scriptFile">
+                            <span class="file-input-text">Choose a file or drag it here</span>
+                            <span class="file-name"></span>
+                        </label>
+                        <input type="file" id="scriptFile" accept=".txt,.doc,.docx,.pdf" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="analyze-btn">Analyze Script</button>
+            </form>
+        </div>
+
+        <div class="editor-main">
+            <div id="editor" contenteditable="true" class="document-editor">
+                <!-- Content will be added here -->
+            </div>
+        </div>
+
+        <div class="editor-comments" id="comments">
+            <div class="settings-button">
+                <span class="material-icons">settings</span>
+            </div>
+            
+            <div class="settings-panel">
+                <div class="settings-header">
+                    <h3>Settings</h3>
+                    <button class="close-settings">&times;</button>
+                </div>
+                <div class="settings-content">
+                    <div class="setting-item">
+                        <span class="setting-label">Show Removed Comments</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="showRemoved">
+                            <label for="showRemoved"></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="comments-container"></div>
+        </div>
+    </div>
+
+    <div class="settings-overlay"></div>
+
+    <!-- Add the case settings modal -->
+    <div class="case-settings-modal">
+        <div class="case-settings-content">
+            <div class="modal-header">
+                <h3>Case Settings</h3>
+                <button class="close-case-settings">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="caseSettingsForm">
+                    <div class="form-group case-type-toggle">
+                        <label>Case Type:</label>
+                        <div class="toggle-container">
+                            <input type="radio" id="criminal" name="caseType" value="criminal" checked>
+                            <input type="radio" id="civil" name="caseType" value="civil">
+                            <label for="civil" class="toggle-btn civil">Civil</label>
+                            <label for="criminal" class="toggle-btn criminal">Criminal</label>
+                            <div class="slider"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group charges-section">
+                        <label>Charges/Claims: <span class="required">*</span></label>
+                        <div class="charges-container">
+                            <select id="chargeSelect" class="charge-select">
+                                <option value="">Select a charge/claim...</option>
+                                <optgroup label="Criminal Charges" class="criminal-charges">
+                                    <option value="murder">Murder/Manslaughter/Homicide</option>
+                                    <option value="assault">Assault</option>
+                                    <option value="theft">Theft</option>
+                                    <option value="fraud">Robbery</option>
+                                    <option value="burglary">Burglary</option>
+                                    <option value="other-criminal">Other Criminal Charge</option>
+                                </optgroup>
+                                <optgroup label="Civil Claims" class="civil-claims">
+                                    <option value="negligence">Negligence</option>
+                                    <option value="breach-contract">Breach of Contract</option>
+                                    <option value="defamation">Defamation</option>
+                                    <option value="other-civil">Other Civil Claim</option>
+                                </optgroup>
+                            </select>
+                            <input type="text" id="otherCharge" class="other-charge" placeholder="Specify other charge/claim" style="display: none;">
+                            <button type="button" class="add-charge-btn">Add</button>
+                        </div>
+                        <div class="selected-charges"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pPartyRep" class="dynamic-label">
+                            <span class="criminal-label">Prosecution Party Representative:</span>
+                            <span class="civil-label" style="display: none;">Plaintiff Party Representative:</span>
+                        </label>
+                        <input type="text" id="pPartyRep" name="pPartyRep" placeholder="Enter party representative name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="defendantName">Defense Party Representative (Defendant): <span class="required">*</span></label>
+                        <input type="text" id="defendantName" placeholder="Enter defendant's name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Victim's Name: </label>
+                        <input type="text" id="victimName" placeholder="Enter victim's name">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Case Theory <span class="required">*</span>
+                            <span class="info-icon material-icons" data-tooltip="A case theory is the story that you want to tell in this trial. It usually consists of 2 or 3 key elements that you want to prove. Once you prove your case theory, the jury should return a verdict in your favor. You don&apos;t need to input the whole case theory for your side. We only need what this specific witness is trying to prove for you.">
+                                info
+                            </span>
+                        </label>
+                        <textarea id="caseTheory" rows="6" placeholder="Enter your case theory..."></textarea>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="save-case-settings">Save Settings</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="case-settings-overlay"></div>
+
+    <script src="editor.js"></script>
+</body>
+</html>
