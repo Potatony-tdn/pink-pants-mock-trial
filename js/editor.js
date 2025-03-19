@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:10009';
+const API_URL = 'pink-pants-backend-production.up.railway.app';
 
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('scriptForm');
