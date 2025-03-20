@@ -1,4 +1,5 @@
 const API_URL = 'https://pink-pants-backend-production.up.railway.app';
+console.log('API_URL:', API_URL);
 
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('scriptForm');
@@ -38,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle file upload
     fileInput.addEventListener('change', async function(e) {
-        console.log('File input changed');
+        console.log('Starting file upload...');
         const file = e.target.files[0];
         if (file) {
             console.log('File selected:', file.name);
@@ -52,7 +53,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 formData.append('file', file);
                 
                 try {
-                    const response = await fetch(`${API_URL}/analyze`, {
+                    const fullUrl = `${API_URL}/analyze`;
+                    console.log('Sending request to:', fullUrl);  // Add this log
+                    
+                    const response = await fetch(fullUrl, {
                         method: 'POST',
                         body: formData
                     });
